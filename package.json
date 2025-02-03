@@ -39,6 +39,5 @@
 	"dependencies": {
 		"rollup": "^4.34.1",
 		"lucide-svelte": "^0.474.0",
-		"sass-embedded-win32-arm64": "^1.83.4"
 	}
 }
