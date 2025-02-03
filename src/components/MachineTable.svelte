@@ -71,7 +71,7 @@
 								-
 							{/if}
 						</td>
-						<td class="hidden md:table-cell px-6 py-4 text-center font-medium text-gray-300">
+						<td class="px-2 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm text-gray-400">
 							{formatLastUpdated(machine.received_at)}
 						</td>
 					</tr>
