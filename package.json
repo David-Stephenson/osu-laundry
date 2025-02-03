@@ -37,7 +37,7 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
-		"@rollup/rollup-win32-arm64-msvc": "^4.32.1",
+		"rollup": "^4.34.1",
 		"lucide-svelte": "^0.474.0",
 		"sass-embedded-win32-arm64": "^1.83.4"
 	}
