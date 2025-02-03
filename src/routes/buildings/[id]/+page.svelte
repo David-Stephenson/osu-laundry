@@ -152,7 +152,7 @@
 </svelte:head>
 
 <div class="flex min-h-screen flex-col bg-black p-4 text-white md:p-8">
-	<div class="mx-auto flex-grow">
+	<div class="mx-auto w-full max-w-full flex-grow">
 		<div class="mb-8">
 			<a
 				href="/buildings"
@@ -213,12 +213,12 @@
 					{/if}
 
 					<!-- Washers Table -->
-					<div class="mb-8">
+					<div class="mb-8 overflow-x-auto">
 						<MachineTable machines={room.washers} type="washer" />
 					</div>
 
 					<!-- Dryers Table -->
-					<div>
+					<div class="overflow-x-auto">
 						<MachineTable machines={room.dryers} type="dryer" />
 					</div>
 				</div>
