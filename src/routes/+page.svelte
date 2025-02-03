@@ -16,7 +16,7 @@
 	/>
 </svelte:head>
 
-<div class="flex min-h-screen flex-col overflow-x-hidden bg-black text-white">
+<div class="flex min-h-screen flex-col overflow-x-hidden text-white">
 	<!-- Hero Section -->
 	<div class="relative min-h-screen overflow-hidden">
 		<!-- Background Image -->
@@ -52,6 +52,10 @@
 				<div
 					class="animate-fade-in mb-8 inline-flex items-center gap-2 rounded-full border border-gray-800 bg-gradient-to-br from-white/5 to-transparent px-6 py-2 backdrop-blur-sm"
 				>
+					<span class="relative flex h-2 w-2">
+						<span class="absolute inline-flex h-full w-full animate-ping animate-duration-1000 rounded-full bg-scarlet opacity-75"></span>
+						<span class="relative inline-flex h-2 w-2 rounded-full bg-scarlet"></span>
+					</span>
 					<span
 						class="bg-gradient-to-r from-scarlet to-red-500 bg-clip-text text-sm text-transparent"
 					>
@@ -80,7 +84,7 @@
 						<ArrowRight class="z-10 h-5 w-5 transition-transform group-hover:translate-x-1" />
 						<div
 							class="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100"
-						/>
+						></div>
 					</a>
 				</div>
 			</div>
@@ -198,7 +202,7 @@
 					<ArrowRight class="z-10 h-5 w-5 transition-transform group-hover:translate-x-1" />
 					<div
 						class="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100"
-					/>
+					></div>
 				</a>
 			</div>
 		</div>

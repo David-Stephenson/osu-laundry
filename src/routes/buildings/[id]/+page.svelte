@@ -20,26 +20,13 @@
 	let refreshInterval: NodeJS.Timer;
 	let countdownInterval: NodeJS.Timer;
 
-	function startCountdown() {
-		countdown = 10;
-		countdownInterval = setInterval(() => {
-			countdown--;
-			if (countdown <= 0) {
-				countdown = 10;
-			}
-		}, 1000);
-	}
-
 	// Helper function to format date to local time
 	function formatDateTime(isoString: string): string {
 		const date = new Date(isoString);
 		return date.toLocaleString(undefined, {
-			weekday: 'short',
-			month: 'short',
-			day: 'numeric',
-			hour: 'numeric',
+			hour: '2-digit',
 			minute: '2-digit',
-			hour12: true
+			hour12: false
 		});
 	}
 
@@ -151,7 +138,7 @@
 	/>
 </svelte:head>
 
-<div class="flex min-h-screen flex-col bg-black p-4 text-white md:p-8">
+<div class="flex min-h-screen flex-col p-4 text-white md:p-8">
 	<div class="mx-auto w-full max-w-full flex-grow">
 		<div class="mb-8">
 			<a
