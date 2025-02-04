@@ -35,10 +35,10 @@
 </script>
 
 <svelte:head>
-	<title>OSU Laundry | Select a Residence</title>
+	<title>Select Your Residence</title>
 	<meta
 		name="description"
-		content="Select a residence hall to view available laundry machines at The Ohio State University."
+		content="View available laundry machines across residence halls at The Ohio State University."
 	/>
 </svelte:head>
 

@@ -130,13 +130,19 @@
 </script>
 
 <svelte:head>
-	<meta
-		name="description"
-		content={building
-			? `View available laundry machines at ${building.organization_name} - The Ohio State University.`
-			: 'Loading laundry machine information...'}
-	/>
+	{#if building}
+		<meta
+			name="description"
+			content={building
+				? `View available laundry machines at ${building.organization_name} - The Ohio State University.`
+				: 'Loading laundry machine information...'}
+		/>
+		<title>Laundry Machines at {building.organization_name}</title>
+	{:else}
+		<title>Loading laundry machine information...</title>
+	{/if}
 </svelte:head>
+
 
 <div class="flex min-h-screen flex-col p-4 text-white md:p-8">
 	<div class="mx-auto w-full max-w-full flex-grow">
