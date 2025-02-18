@@ -7,6 +7,7 @@
 	import MachineStats from '$components/MachineStats.svelte';
 	import { PUBLIC_API_URL } from '$env/static/public';
 	import { ArrowLeft, RotateCw } from 'lucide-svelte';
+	import toast from 'svelte-french-toast';
 
 	const buildingId = $page.params.id;
 	let building: Building | null = null;
@@ -31,7 +32,7 @@
 	}
 
 	async function fetchBuildingDetails() {
-		if (loading && !initialLoad) return; // Prevent multiple simultaneous requests except for initial load
+		if (loading && !initialLoad) return;
 		loading = true;
 		try {
 			const [buildingResponse, machinesResponse] = await Promise.all([
@@ -39,36 +40,41 @@
 				fetch(`${PUBLIC_API_URL}/api/buildings/${buildingId}/machines`)
 			]);
 
+			if (!buildingResponse.ok || !machinesResponse.ok) {
+				throw new Error('Failed to fetch data');
+			}
+
 			const buildingsData: ApiResponse<Building[]> = await buildingResponse.json();
 			const machinesData: ApiResponse<BuildingResponse> = await machinesResponse.json();
 
-			building = buildingsData.data.find((b) => b.id === buildingId) || null;
-			machines =
-				machinesData.data.building.rooms.flatMap((room) =>
+			building = buildingsData.data.find((b) => b.id === buildingId) || building;
+			
+			if (machinesData.data.building.rooms) {
+				machines = machinesData.data.building.rooms.flatMap((room) =>
 					room.machines.map((machine) => ({
 						...machine,
 						room_name: room.room_name,
 						building_id: room.building_id,
 						building_name: room.room_name
 					}))
-				) || [];
-			// Calculate complete and in-use counts
-			const washers = machines.filter((m) => m.type === 'washer');
-			const dryers = machines.filter((m) => m.type === 'dryer');
+				);
 
-			stats = {
-				...machinesData.data.stats,
-				washers_complete: washers.filter((m) => m.status === 'COMPLETE').length,
-				dryers_complete: dryers.filter((m) => m.status === 'COMPLETE').length
-			};
+				const washers = machines.filter((m) => m.type === 'washer');
+				const dryers = machines.filter((m) => m.type === 'dryer');
+
+				stats = {
+					...machinesData.data.stats,
+					washers_complete: washers.filter((m) => m.status === 'COMPLETE').length,
+					dryers_complete: dryers.filter((m) => m.status === 'COMPLETE').length
+				};
+			}
 			lastRefresh = new Date();
 		} catch (e) {
 			console.error('Error fetching building details:', e);
-			error = 'Failed to load building details';
+			toast.error('Failed to refresh data. Will try again soon.');
 		} finally {
 			loading = false;
 			initialLoad = false;
-			// Only reset countdown after request completes
 			countdown = 10;
 		}
 	}
