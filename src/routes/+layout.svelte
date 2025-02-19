@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '../app.scss';
-	import toast, { Toaster } from 'svelte-french-toast';
 </script>
 
 <svelte:head>
@@ -8,6 +7,5 @@
 </svelte:head>
 
 <div class="flex flex-col">
-	<Toaster />
 	<slot />
 </div>

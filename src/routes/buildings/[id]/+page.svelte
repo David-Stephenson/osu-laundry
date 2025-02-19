@@ -6,8 +6,7 @@
 	import MachineTable from '$components/MachineTable.svelte';
 	import MachineStats from '$components/MachineStats.svelte';
 	import { PUBLIC_API_URL } from '$env/static/public';
-	import { ArrowLeft, RotateCw } from 'lucide-svelte';
-	import toast from 'svelte-french-toast';
+	import { ArrowLeft, RotateCw, Wifi, WifiOff } from 'lucide-svelte';
 
 	const buildingId = $page.params.id;
 	let building: Building | null = null;
@@ -20,6 +19,7 @@
 	let countdown = 10;
 	let refreshInterval: NodeJS.Timer;
 	let countdownInterval: NodeJS.Timer;
+	let showErrorBanner = false;
 
 	// Helper function to format date to local time
 	function formatDateTime(isoString: string): string {
@@ -68,10 +68,11 @@
 					dryers_complete: dryers.filter((m) => m.status === 'COMPLETE').length
 				};
 			}
+			showErrorBanner = false;
 			lastRefresh = new Date();
 		} catch (e) {
 			console.error('Error fetching building details:', e);
-			toast.error('Failed to refresh data. Will try again soon.');
+			showErrorBanner = true;
 		} finally {
 			loading = false;
 			initialLoad = false;
@@ -149,6 +150,15 @@
 	{/if}
 </svelte:head>
 
+<!-- Error Banner -->
+{#if showErrorBanner}
+	<div class="bg-red-900 text-red-200">
+		<div class="flex items-center justify-center gap-2 px-4 py-2">
+			<WifiOff class="h-4 w-4" />
+			<span>Failed to fetch data. Will try again soon.</span>
+		</div>
+	</div>
+{/if}
 
 <div class="flex min-h-screen flex-col p-4 text-white md:p-8">
 	<div class="mx-auto w-full max-w-full flex-grow">
@@ -226,3 +236,20 @@
 	</div>
 	<Footer />
 </div>
+
+<style>
+	.animate-fade-in {
+		animation: fadeIn 0.3s ease-in-out;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+			transform: translateY(-100%);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+</style>
