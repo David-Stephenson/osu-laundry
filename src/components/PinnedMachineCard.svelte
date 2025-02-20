@@ -8,9 +8,9 @@
 
     // Get background color based on status
     $: bgColor = machine.status === 'AVAILABLE' 
-        ? 'bg-emerald-900/50' 
+        ? 'bg-blue-900/50' 
         : machine.status === 'COMPLETE' 
-            ? 'bg-blue-900/50' 
+            ? 'bg-emerald-900/50' 
             : 'bg-yellow-900/50';
 </script>
 
@@ -43,7 +43,7 @@
                 </span>
             </div>
         {:else}
-            <span class="text-2xl font-bold {machine.status === 'AVAILABLE' ? 'text-emerald-300' : 'text-blue-300'}">
+            <span class="text-2xl font-bold {machine.status === 'AVAILABLE' ? 'text-blue-300' : 'text-emerald-300'}">
                 {machine.status === 'AVAILABLE' ? 'Available' : 'Complete'}
             </span>
         {/if}
