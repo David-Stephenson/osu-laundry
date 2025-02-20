@@ -90,7 +90,7 @@
 					</tr>
 					{#if machine !== machines[machines.length - 1]}
 						<tr>
-							<td colspan="5" class="p-0">
+							<td colspan="6" class="p-0">
 								<div class="border-t border-gray-800/50"></div>
 							</td>
 						</tr>
