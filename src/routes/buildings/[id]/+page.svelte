@@ -6,7 +6,8 @@
 	import MachineTable from '$components/MachineTable.svelte';
 	import MachineStats from '$components/MachineStats.svelte';
 	import { PUBLIC_API_URL } from '$env/static/public';
-	import { ArrowLeft, RotateCw, Wifi, WifiOff } from 'lucide-svelte';
+	import { ArrowLeft, RotateCw, WifiOff } from 'lucide-svelte';
+	import PinnedMachineCard from '$components/PinnedMachineCard.svelte';
 
 	const buildingId = $page.params.id;
 	let building: Building | null = null;
@@ -20,6 +21,7 @@
 	let refreshInterval: NodeJS.Timer;
 	let countdownInterval: NodeJS.Timer;
 	let showErrorBanner = false;
+	let pinnedMachines: Set<string> = new Set();
 
 	// Helper function to format date to local time
 	function formatDateTime(isoString: string): string {
@@ -81,6 +83,10 @@
 	}
 
 	onMount(() => {
+		const stored = localStorage.getItem(`pinned-machines-${buildingId}`);
+		if (stored) {
+			pinnedMachines = new Set(JSON.parse(stored));
+		}
 		fetchBuildingDetails();
 		refreshInterval = setInterval(fetchBuildingDetails, 10000);
 		// Start countdown interval but don't reset countdown here
@@ -134,6 +140,35 @@
 
 	// Check if there's only one room
 	$: hasMultipleRooms = sortedRooms.length > 1;
+
+	// Sort machines with pinned ones first
+	$: sortedMachinesByRoom = Object.values(machinesByRoom).map(room => ({
+		...room,
+		washers: [...room.washers].sort((a, b) => {
+			const aPinned = pinnedMachines.has(a.id);
+			const bPinned = pinnedMachines.has(b.id);
+			if (aPinned && !bPinned) return -1;
+			if (!aPinned && bPinned) return 1;
+			return a.number - b.number;
+		}),
+		dryers: [...room.dryers].sort((a, b) => {
+			const aPinned = pinnedMachines.has(a.id);
+			const bPinned = pinnedMachines.has(b.id);
+			if (aPinned && !bPinned) return -1;
+			if (!aPinned && bPinned) return 1;
+			return a.number - b.number;
+		})
+	}));
+
+	function togglePin(machineId: string) {
+		if (pinnedMachines.has(machineId)) {
+			pinnedMachines.delete(machineId);
+		} else {
+			pinnedMachines.add(machineId);
+		}
+		pinnedMachines = pinnedMachines; // trigger reactivity
+		localStorage.setItem(`pinned-machines-${buildingId}`, JSON.stringify([...pinnedMachines]));
+	}
 </script>
 
 <svelte:head>
@@ -213,6 +248,18 @@
 				<MachineStats {stats} />
 			{/if}
 
+			<!-- Pinned Machines Section -->
+			{#if pinnedMachines.size > 0}
+				<div class="mb-12">
+					<h2 class="mb-6 text-2xl font-bold text-white">Pinned Machines</h2>
+					<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+						{#each machines.filter(m => pinnedMachines.has(m.id)) as machine}
+							<PinnedMachineCard {machine} onUnpin={togglePin} />
+						{/each}
+					</div>
+				</div>
+			{/if}
+
 			{#each sortedRooms as room}
 				<div class="mb-12">
 					{#if hasMultipleRooms}
@@ -223,12 +270,22 @@
 
 					<!-- Washers Table -->
 					<div class="mb-8 overflow-x-auto">
-						<MachineTable machines={room.washers} type="washer" />
+						<MachineTable 
+							machines={room.washers} 
+							type="washer" 
+							{pinnedMachines}
+							onTogglePin={togglePin}
+						/>
 					</div>
 
 					<!-- Dryers Table -->
 					<div class="overflow-x-auto">
-						<MachineTable machines={room.dryers} type="dryer" />
+						<MachineTable 
+							machines={room.dryers} 
+							type="dryer"
+							{pinnedMachines}
+							onTogglePin={togglePin}
+						/>
 					</div>
 				</div>
 			{/each}

@@ -1,10 +1,12 @@
 <script lang="ts">
 	import type { Machine } from '$lib/types';
 	import { formatDateTime, formatRemainingTime, getStatusStyle } from '$lib/utils';
-	import { Ban, Lock, Plus } from 'lucide-svelte';
+	import { Ban, Lock, Plus, Pin, PinOff, Star } from 'lucide-svelte';
 
 	export let machines: Machine[];
 	export let type: 'washer' | 'dryer';
+	export let pinnedMachines: Set<string>;
+	export let onTogglePin: (id: string) => void;
 
 	function formatLastUpdated(isoString: string): string {
 		const date = new Date(isoString);
@@ -39,8 +41,9 @@
 		<table class="w-full overflow-hidden bg-gray-900/30 backdrop-blur-sm">
 			<thead>
 				<tr>
-					<th class="w-10 px-1 py-3 md:py-4 text-center text-xs md:text-sm font-medium uppercase tracking-wider text-gray-400">#</th>
-					<th class="px-2 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm font-medium uppercase tracking-wider text-gray-400">Status</th>
+					<th class="w-12 px-2 py-3 md:py-4 text-left text-xs md:text-sm font-medium uppercase tracking-wider text-gray-400">#</th>
+					<th class="w-10 px-2 py-3 md:py-4 text-center text-xs md:text-sm font-medium uppercase tracking-wider text-gray-400">Pin</th>
+					<th class="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-medium uppercase tracking-wider text-gray-400">Status</th>
 					<th class="px-2 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm font-medium uppercase tracking-wider text-gray-400">Time Left</th>
 					<th class="hidden md:table-cell px-6 py-4 text-center text-sm font-medium uppercase tracking-wider text-gray-400">Est. Done</th>
 					<th class="px-2 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm font-medium uppercase tracking-wider text-gray-400">Updated</th>
@@ -48,11 +51,21 @@
 			</thead>
 			<tbody class="border-t border-gray-800/50">
 				{#each machines.sort((a, b) => a.number - b.number) as machine}
-					<tr class={`transition-colors hover:bg-gray-800/30 ${!machine.is_active ? 'opacity-50' : ''}`}>
-						<td class="w-10 px-1 py-3 md:py-4 text-center">
-							<span class="text-base md:text-lg font-semibold text-white">{machine.number}</span>
+					<tr class={`transition-colors hover:bg-gray-800/30 ${!machine.is_active ? 'opacity-50' : ''} 
+						${pinnedMachines.has(machine.id) ? 'bg-gray-800/20' : ''}`}
+					>
+						<td class="w-12 px-2 py-3 md:py-4 text-left">
+							<span class="text-base md:text-lg font-semibold text-white">#{machine.number}</span>
 						</td>
-						<td class="px-2 md:px-6 py-3 md:py-4 text-center">
+						<td class="w-10 px-2 py-3 md:py-4">
+							<button
+								class="flex items-center justify-center text-gray-500 hover:text-scarlet transition-colors"
+								on:click|stopPropagation={() => onTogglePin(machine.id)}
+							>
+								<Star class="h-4 w-4 {pinnedMachines.has(machine.id) ? 'fill-current text-scarlet' : ''}" />
+							</button>
+						</td>
+						<td class="px-4 md:px-6 py-3 md:py-4 text-left">
 							<span class={`inline-block rounded-full px-2 md:px-4 py-1 md:py-1.5 text-xs md:text-sm font-medium ${getStatusStyle(machine.status)}`}>
 								{machine.status.replace('_', ' ')}
 							</span>
