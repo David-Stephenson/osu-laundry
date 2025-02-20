@@ -11,7 +11,9 @@
         ? 'bg-blue-900/50' 
         : machine.status === 'COMPLETE' 
             ? 'bg-emerald-900/50' 
-            : 'bg-yellow-900/50';
+            : machine.status === 'IN_USE'
+                ? 'bg-yellow-900/50'
+                : 'bg-red-900/50';
 </script>
 
 <div class="relative h-[120px] rounded-lg border border-gray-800 p-3 {bgColor}">
@@ -43,8 +45,19 @@
                 </span>
             </div>
         {:else}
-            <span class="text-2xl font-bold {machine.status === 'AVAILABLE' ? 'text-blue-300' : 'text-emerald-300'}">
-                {machine.status === 'AVAILABLE' ? 'Available' : 'Complete'}
+            <span class="text-2xl font-bold {
+                machine.status === 'AVAILABLE' 
+                    ? 'text-blue-300' 
+                    : machine.status === 'COMPLETE'
+                        ? 'text-emerald-300'
+                        : 'text-red-300'
+            }">
+                {machine.status === 'AVAILABLE' 
+                    ? 'Available' 
+                    : machine.status === 'COMPLETE'
+                        ? 'Complete'
+                        : 'Unavailable'
+                }
             </span>
         {/if}
     </div>
