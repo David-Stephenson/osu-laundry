@@ -36,6 +36,7 @@
 	let activeTestimonial = 0;
 	let testimonialInterval: ReturnType<typeof setInterval> | undefined;
 	let morphingDot = false;
+	let isLoading = false;
 
 	function nextTestimonial(): void {
 		// Add morphing animation flag
