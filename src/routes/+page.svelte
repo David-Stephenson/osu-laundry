@@ -1,11 +1,115 @@
-<script>
-	import Footer from '$components/Footer.svelte';
-	import { ArrowRight, Smartphone, Globe2, Sparkles } from 'lucide-svelte';
+<script lang="ts">
+	import {
+		ArrowRight,
+		Globe2,
+		WashingMachine,
+		Clock,
+		Pin,
+		Quote,
+		ChevronLeft
+	} from 'lucide-svelte';
+	import ovalImage from '../images/oval.webp?enhanced';
+	import phoneImage from '../images/phone.png?enhanced';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	// Pick a random number between 1 and 6 for the background image
-	const randomImageNumber = Math.floor(Math.random() * 5) + 1;
-	const backgroundImage = `/images/${randomImageNumber}.webp`;
+	// Testimonials array for the carousel - removed role/class designations
+	const testimonials = [
+		{
+			quote: 'I was just thinking about how bad the speed queen app is, this is a great upgrade!',
+			author: 'William C.'
+		},
+		{
+			quote: 'Morrill Tower is in need of this. 🙏🏾 fire idea',
+			author: 'Ayush S.'
+		},
+		{
+			quote: 'I wish your website existed a few years ago!',
+			author: 'Matt G.'
+		},
+		{
+			quote: 'Oh my god thank you',
+			author: 'Rishi S.'
+		}
+	];
+
+	let activeTestimonial = 0;
+	let testimonialInterval: ReturnType<typeof setInterval> | undefined;
+	let morphingDot = false;
+
+	function nextTestimonial(): void {
+		// Add morphing animation flag
+		morphingDot = true;
+		setTimeout(() => {
+			morphingDot = false;
+		}, 600);
+
+		activeTestimonial = (activeTestimonial + 1) % testimonials.length;
+
+		// Reset the interval when manually changing
+		clearInterval(testimonialInterval);
+		startInterval();
+	}
+
+	function prevTestimonial(): void {
+		// Add morphing animation flag
+		morphingDot = true;
+		setTimeout(() => {
+			morphingDot = false;
+		}, 600);
+
+		activeTestimonial = (activeTestimonial - 1 + testimonials.length) % testimonials.length;
+
+		// Reset the interval when manually changing
+		clearInterval(testimonialInterval);
+		startInterval();
+	}
+
+	function setTestimonial(index: number): void {
+		if (index === activeTestimonial) return;
+
+		// Add morphing animation flag
+		morphingDot = true;
+		setTimeout(() => {
+			morphingDot = false;
+		}, 600);
+
+		activeTestimonial = index;
+		// Reset the interval when manually changing
+		clearInterval(testimonialInterval);
+		startInterval();
+	}
+
+	function startInterval(): void {
+		testimonialInterval = setInterval(() => {
+			// Add morphing animation flag for automatic changes too
+			morphingDot = true;
+			setTimeout(() => {
+				morphingDot = false;
+			}, 600);
+
+			activeTestimonial = (activeTestimonial + 1) % testimonials.length;
+		}, 5000); // Change testimonial every 5 seconds
+	}
+
+	// Add a refresh function with loading state
+	function refreshData() {
+		isLoading = true;
+
+		// In a real app, this would be an async fetch
+		// For demo, we'll just simulate loading for 1 second then reload
+		setTimeout(() => {
+			window.location.reload();
+		}, 1000);
+	}
+
+	onMount(() => {
+		startInterval();
+
+		return () => {
+			clearInterval(testimonialInterval);
+		};
+	});
 </script>
 
 <svelte:head>
@@ -16,230 +120,335 @@
 	/>
 </svelte:head>
 
-<div class="flex min-h-screen flex-col overflow-x-hidden text-white">
-	<!-- Hero Section -->
-	<div class="relative min-h-screen overflow-hidden">
-		<!-- Background Image -->
-		<div class="absolute inset-0">
-			<img src={backgroundImage} alt="" class="h-full w-full object-cover opacity-15 grayscale" />
-		</div>
-
-		<!-- Dark Overlay -->
-		<div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-transparent"></div>
-
-		<!-- Hero Backgrounds -->
-		<div class="pointer-events-none absolute inset-0">
-			<div
-				class="animate-blob absolute -left-[10%] top-0 h-[40vw] w-[40vw] rounded-full bg-red-500/10 blur-3xl will-change-transform"
-			></div>
-			<div
-				class="animate-blob animation-delay-2000 absolute -right-[10%] top-[20%] h-[35vw] w-[35vw] rounded-full bg-scarlet/10 blur-3xl will-change-transform"
-			></div>
-			<div
-				class="animate-blob animation-delay-4000 absolute bottom-[10%] left-[20%] h-[30vw] w-[30vw] rounded-full bg-red-600/10 blur-3xl"
-			></div>
-		</div>
-
-		<!-- Animated Grid -->
-		<div
-			class="absolute inset-0 opacity-20 [mask-image:radial-gradient(ellipse_at_center,white,transparent_80%)]"
-		>
-			<div class="animate-grid h-full w-full [background-size:60px_60px]"></div>
-		</div>
-
-		<div class="relative mx-auto flex min-h-screen max-w-7xl items-center px-4 py-24 md:px-8">
-			<div class="mx-auto max-w-3xl text-center" in:fade={{ duration: 400 }}>
+<div class="relative min-h-screen overflow-hidden bg-zinc-950 text-white">
+	<!-- Header -->
+	<header class="sticky top-0 z-20 border-b border-zinc-900/70 bg-zinc-950/80 backdrop-blur-sm">
+		<div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 md:px-8">
+			<div class="flex items-center gap-3">
 				<div
-					class="animate-fade-in mb-8 inline-flex items-center gap-2 rounded-full border border-gray-800 bg-gradient-to-br from-white/5 to-transparent px-6 py-2 backdrop-blur-sm"
+					class="flex h-10 w-10 items-center justify-center rounded-md bg-scarlet shadow-lg shadow-scarlet/20"
 				>
-					<span class="relative flex h-2 w-2">
-						<span class="absolute inline-flex h-full w-full animate-ping animate-duration-1000 rounded-full bg-scarlet opacity-75"></span>
-						<span class="relative inline-flex h-2 w-2 rounded-full bg-scarlet"></span>
-					</span>
-					<span
-						class="bg-gradient-to-r from-scarlet to-red-500 bg-clip-text text-sm text-transparent"
-					>
-						Now Live Across Campus
-					</span>
+					<WashingMachine class="h-6 w-6 text-white" />
 				</div>
-				<h1 class="mb-8 font-serif text-6xl font-bold leading-tight md:text-8xl">
-					<span class="text-white">
-						Laundry at Ohio State
-						<span
-							class="bg-gradient-to-r from-scarlet to-red-500 bg-clip-text italic text-transparent"
-							>reimagined</span
-						>.
-					</span>
-				</h1>
-				<p class="mb-12 text-2xl text-gray-300">
-					The future of campus laundry management is here. Real-time tracking, predictive analytics,
-					and seamless integration.
-				</p>
-				<div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-					<a
-						href="/buildings"
-						class="group relative flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-scarlet to-red-600 px-8 py-4 text-lg font-medium text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+				<span class="font-serif text-xl font-bold">OSU Laundry</span>
+			</div>
+			<a
+				href="/buildings"
+				class="rounded-md bg-scarlet px-4 py-2 text-sm font-medium text-white shadow-md shadow-scarlet/20"
+			>
+				Get Started
+			</a>
+		</div>
+	</header>
+
+	<!-- Hero Section with monochrome oval background and gradient blobs -->
+	<section
+		class="relative flex min-h-[80vh] items-center overflow-hidden pb-16 pt-20 md:pb-32 md:pt-24"
+	>
+		<div class="absolute inset-0 z-0 overflow-hidden">
+			<div class="absolute inset-0 h-full w-full opacity-15">
+				<enhanced:img
+					src={ovalImage}
+					alt="Background shape"
+					class="h-full w-full object-cover object-center grayscale"
+				/>
+			</div>
+		</div>
+
+		<div class="relative z-10 mx-auto w-full max-w-7xl px-4 md:px-8">
+			<div class="grid items-center gap-16 md:grid-cols-2 md:gap-12 lg:gap-20">
+				<!-- Left side: Content -->
+				<div class="relative">
+					<div
+						class="mb-6 inline-flex items-center rounded-full border border-scarlet/20 bg-scarlet/10 px-3 py-1 text-sm font-medium text-scarlet backdrop-blur-sm"
 					>
-						<span class="relative z-10">Get Started</span>
-						<ArrowRight class="z-10 h-5 w-5 transition-transform group-hover:translate-x-1" />
-						<div
-							class="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100"
-						></div>
-					</a>
+						<span class="mr-1.5 h-2 w-2 animate-pulse rounded-full bg-scarlet"></span>
+						Live across all residence halls
+					</div>
+
+					<h1 class="mb-8 font-serif text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
+						Modern laundry for
+						<span class="relative">
+							<span class="relative z-10 text-scarlet">modern students</span>
+							<span class="absolute bottom-2 left-0 -z-10 h-3 w-full bg-scarlet/20 blur-sm"></span>
+						</span>
+					</h1>
+
+					<p class="mb-8 max-w-md text-lg text-zinc-400">
+						Real-time machine availability, status updates, and convenient features for laundry
+						management at Ohio State.
+					</p>
+
+					<div class="flex flex-wrap gap-4">
+						<a
+							href="/buildings"
+							class="flex items-center gap-2 rounded-md bg-scarlet px-6 py-3 text-white shadow-lg shadow-scarlet/20"
+						>
+							Find Your Building
+							<ArrowRight class="h-5 w-5" />
+						</a>
+
+						<a
+							href="#features"
+							class="flex items-center gap-2 rounded-md border border-zinc-800 px-6 py-3 text-white backdrop-blur-sm"
+						>
+							Learn More
+						</a>
+					</div>
+				</div>
+
+				<!-- Right side: Dashboard Preview -->
+				<div class="perspective-container relative flex items-center justify-center">
+					<div class="phone-mockup dashboard-preview">
+						<enhanced:img src={phoneImage} alt="OSU Laundry mobile app" class="h-auto w-full" />
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</section>
 
-	<!-- Value Proposition -->
-	<div class="border-y border-gray-800 bg-gradient-to-b from-black to-gray-900/50 py-24">
+	<!-- Stats Section -->
+	<section class="relative bg-zinc-900/70 py-16 backdrop-blur-md">
 		<div class="mx-auto max-w-7xl px-4 md:px-8">
-			<div class="grid gap-16 md:grid-cols-3">
+			<div class="grid gap-8 md:grid-cols-3">
+				<div class="text-center">
+					<div class="text-4xl font-bold text-white">200+</div>
+					<div class="mt-2 text-zinc-400">Students using daily</div>
+				</div>
+
+				<div class="text-center">
+					<div class="text-4xl font-bold text-white">24/7</div>
+					<div class="mt-2 text-zinc-400">Real-time updates</div>
+				</div>
+
+				<div class="text-center">
+					<div class="text-4xl font-bold text-white">All</div>
+					<div class="mt-2 text-zinc-400">Residence halls covered</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Features Section -->
+	<section id="features" class="relative py-20 md:py-24">
+		<div class="mx-auto max-w-7xl px-4 md:px-8">
+			<div class="mb-16 text-center">
+				<h2 class="mb-4 font-serif text-3xl font-bold text-white md:text-4xl">
+					Designed for <span class="text-scarlet">OSU students</span>
+				</h2>
+				<p class="mx-auto max-w-2xl text-xl text-zinc-400">
+					Features that make laundry management efficient and hassle-free
+				</p>
+			</div>
+
+			<div class="grid gap-8 md:grid-cols-3">
 				<div
-					class="animate-fade-in rounded-3xl border border-gray-800 bg-gradient-to-br from-white/5 to-transparent p-8 backdrop-blur-xl transition-all hover:border-gray-700"
+					class="rounded-lg border border-zinc-800 bg-zinc-900/80 p-6 shadow-lg backdrop-blur-sm"
 				>
-					<div class="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-scarlet/20">
+					<div class="mb-5 flex h-12 w-12 items-center justify-center rounded-md bg-scarlet/20">
 						<Globe2 class="h-6 w-6 text-scarlet" />
 					</div>
-					<h3 class="mb-4 font-serif text-2xl font-bold">Universal Access</h3>
-					<p class="text-gray-300">
-						Access real-time machine status from any device, anywhere. No app installs required.
+					<h3 class="mb-3 font-serif text-xl font-bold">Universal Access</h3>
+					<p class="text-zinc-400">
+						Access from any device, anywhere on campus. No downloads or installs needed.
 					</p>
 				</div>
 
 				<div
-					class="animate-fade-in rounded-3xl border border-gray-800 bg-gradient-to-br from-white/5 to-transparent p-8 backdrop-blur-xl transition-all hover:border-gray-700"
-					style="animation-delay: 100ms"
+					class="rounded-lg border border-zinc-800 bg-zinc-900/80 p-6 shadow-lg backdrop-blur-sm"
 				>
-					<div class="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-scarlet/20">
-						<Sparkles class="h-6 w-6 text-scarlet" />
+					<div class="mb-5 flex h-12 w-12 items-center justify-center rounded-md bg-scarlet/20">
+						<Pin class="h-6 w-6 text-scarlet" />
 					</div>
-					<h3 class="mb-4 font-serif text-2xl font-bold">Smart Predictions</h3>
-					<p class="text-gray-300">
-						AI-powered predictions for machine availability and optimal laundry times.
+					<h3 class="mb-3 font-serif text-xl font-bold">Pin Favorite Machines</h3>
+					<p class="text-zinc-400">
+						Save your preferred machines for easy access and tracking when you return to do laundry.
 					</p>
 				</div>
 
 				<div
-					class="animate-fade-in rounded-3xl border border-gray-800 bg-gradient-to-br from-white/5 to-transparent p-8 backdrop-blur-xl transition-all hover:border-gray-700"
-					style="animation-delay: 200ms"
+					class="rounded-lg border border-zinc-800 bg-zinc-900/80 p-6 shadow-lg backdrop-blur-sm"
 				>
-					<div class="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-scarlet/20">
-						<Smartphone class="h-6 w-6 text-scarlet" />
+					<div class="mb-5 flex h-12 w-12 items-center justify-center rounded-md bg-scarlet/20">
+						<Clock class="h-6 w-6 text-scarlet" />
 					</div>
-					<h3 class="mb-4 font-serif text-2xl font-bold">Live Alerts</h3>
-					<p class="text-gray-300">
-						Push notifications when your laundry is done or machines become available.
+					<h3 class="mb-3 font-serif text-xl font-bold">Live Updates</h3>
+					<p class="text-zinc-400">
+						Real-time machine status and timers showing exactly when machines will be available.
 					</p>
 				</div>
 			</div>
 		</div>
-	</div>
+	</section>
 
-	<!-- Why This Was Made -->
-	<div class="relative border-y border-gray-800 bg-black py-32">
-		<!-- Subtle Background Effect -->
-		<div class="pointer-events-none absolute inset-0">
-			<div
-				class="animate-blob absolute right-0 top-0 h-[600px] w-[600px] rounded-full bg-red-500/5 blur-3xl"
-			></div>
-		</div>
-
-		<div class="relative mx-auto max-w-7xl px-4 md:px-8">
-			<div class="mx-auto max-w-3xl text-center">
-				<h2 class="mb-16 font-serif text-5xl font-bold">
-					<span class="bg-gradient-to-r from-scarlet to-red-500 bg-clip-text text-transparent"
-						>Why</span
-					>
-					<span class="text-white"> This Was Made</span>
+	<!-- Testimonials Section -->
+	<section class="relative bg-zinc-900/50 py-20 backdrop-blur-sm md:py-24">
+		<div class="mx-auto max-w-7xl px-4 md:px-8">
+			<div class="mb-16 text-center">
+				<h2 class="mb-4 font-serif text-3xl font-bold text-white md:text-4xl">
+					What <span class="text-scarlet">students</span> are saying
 				</h2>
+				<p class="mx-auto max-w-2xl text-xl text-zinc-400">
+					Hear from students who use OSU Laundry every day
+				</p>
 			</div>
 
-			<div class="grid gap-8 md:grid-cols-2">
+			<div class="relative mx-auto max-w-3xl">
+				<!-- Testimonial Carousel -->
 				<div
-					class="group rounded-3xl border border-gray-800 bg-gradient-to-br from-white/5 to-transparent p-8 backdrop-blur-xl transition-all hover:border-gray-700"
+					class="relative overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900/80 p-10 shadow-lg backdrop-blur-sm"
 				>
-					<h3 class="mb-4 font-serif text-2xl font-bold text-white">Limited Mobile App</h3>
-					<p class="text-lg text-gray-300">
-						The official Speed Queen app is restricted to mobile devices and provides a frustrating
-						experience. By reverse engineering their API, we've created a modern alternative that
-						works everywhere.
-					</p>
+					<!-- Left/Right Navigation Buttons -->
+					<button
+						class="absolute left-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-zinc-700/30 bg-zinc-800/50 text-zinc-400 backdrop-blur-sm transition-colors hover:text-white"
+						on:click={prevTestimonial}
+					>
+						<ChevronLeft class="h-5 w-5" />
+					</button>
+
+					<button
+						class="absolute right-2 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-zinc-700/30 bg-zinc-800/50 text-zinc-400 backdrop-blur-sm transition-colors hover:text-white"
+						on:click={nextTestimonial}
+					>
+						<ArrowRight class="h-5 w-5" />
+					</button>
+
+					<div class="relative h-44">
+						{#key activeTestimonial}
+							<div
+								class="absolute inset-0 flex flex-col items-center justify-center"
+								in:fade={{ duration: 200, delay: 200 }}
+								out:fade={{ duration: 200 }}
+							>
+								<div class="mb-6 flex justify-center text-scarlet">
+									<Quote class="h-10 w-10 opacity-50" />
+								</div>
+								<p class="mb-6 max-w-xl text-xl italic text-zinc-300">
+									{testimonials[activeTestimonial].quote}
+								</p>
+								<div class="text-center text-sm text-zinc-400">
+									— {testimonials[activeTestimonial].author}
+								</div>
+							</div>
+						{/key}
+					</div>
 				</div>
 
-				<div
-					class="group rounded-3xl border border-gray-800 bg-gradient-to-br from-white/5 to-transparent p-8 backdrop-blur-xl transition-all hover:border-gray-700"
-				>
-					<h3 class="mb-4 font-serif text-2xl font-bold text-white">Better Technology</h3>
-					<p class="text-lg text-gray-300">
-						Built with modern web technologies and designed with students in mind, this project
-						represents what campus laundry monitoring should be: fast, intuitive, and accessible.
-					</p>
+				<!-- Dot Navigation -->
+				<div class="mt-8 flex justify-center gap-3">
+					{#each testimonials as _, i}
+						<button
+							class="group relative"
+							on:click={() => setTestimonial(i)}
+							aria-label={`Testimonial ${i + 1}`}
+						>
+							<div
+								class="h-3 {i === activeTestimonial
+									? 'w-8 rounded-full bg-scarlet'
+									: 'w-3 rounded-full bg-zinc-700 hover:bg-zinc-600'} 
+								transition-all duration-300 ease-in-out"
+							></div>
+
+							{#if i === activeTestimonial}
+								<div
+									class="animate-ping-slow pointer-events-none absolute -inset-1 rounded-full bg-scarlet/20 opacity-70 blur-md"
+								></div>
+							{/if}
+						</button>
+					{/each}
 				</div>
 			</div>
 		</div>
-	</div>
+	</section>
 
 	<!-- CTA Section -->
-	<div class="bg-gradient-to-br from-black via-red-950/50 to-black py-32">
-		<div class="mx-auto max-w-4xl px-4 text-center md:px-8">
-			<h2 class="mb-6 font-serif text-5xl font-bold">
-				<span class="bg-gradient-to-r from-scarlet to-red-500 bg-clip-text text-transparent">
-					Ready to Transform
-				</span>
-				<br />
-				Your Laundry Experience?
-			</h2>
-			<p class="mb-8 text-xl text-gray-300">
-				Join thousands of students already using the future of laundry management
-			</p>
-			<div class="flex justify-center">
+	<section class="relative border-t border-zinc-900/70 py-16 backdrop-blur-sm">
+		<div class="mx-auto max-w-7xl px-4 md:px-8">
+			<div class="flex flex-col items-center text-center">
+				<h2 class="mb-4 max-w-2xl font-serif text-3xl font-bold text-white md:text-4xl">
+					Ready to transform your laundry experience?
+				</h2>
+				<p class="mb-8 max-w-2xl text-xl text-zinc-400">
+					Join thousands of Ohio State students already using the future of campus laundry
+					management.
+				</p>
 				<a
 					href="/buildings"
-					class="group relative flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-gradient-to-r from-scarlet to-red-600 px-8 py-4 text-lg font-medium text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+					class="flex items-center gap-2 rounded-md bg-scarlet px-8 py-3 text-lg font-medium text-white shadow-lg shadow-scarlet/20"
 				>
-					<span class="relative z-10">Get Started Now</span>
-					<ArrowRight class="z-10 h-5 w-5 transition-transform group-hover:translate-x-1" />
-					<div
-						class="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 transition-opacity group-hover:opacity-100"
-					></div>
+					Get Started Now
+					<ArrowRight class="h-5 w-5" />
 				</a>
 			</div>
 		</div>
-	</div>
-
-	<Footer />
+	</section>
 </div>
 
-<style global>
-	@keyframes grid {
-		from {
-			background-position: 0 0;
-		}
-		to {
-			background-position: 60px 60px;
-		}
-	}
-
-	.animate-grid {
-		background-image: linear-gradient(to right, #ffffff10 1px, transparent 1px),
-			linear-gradient(to bottom, #ffffff10 1px, transparent 1px);
-		animation: grid 12s linear infinite;
-	}
-
-	@keyframes fade-in {
-		from {
-			opacity: 0;
-			transform: translateY(20px);
-		}
-		to {
+<style>
+	@keyframes pulse {
+		0%,
+		100% {
 			opacity: 1;
-			transform: translateY(0);
+		}
+		50% {
+			opacity: 0.5;
 		}
 	}
 
-	.animate-fade-in {
-		animation: fade-in 0.6s ease-out forwards;
-		opacity: 0;
+	.animate-pulse {
+		animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	}
+
+	@keyframes ping-slow {
+		0% {
+			transform: scale(0.8);
+			opacity: 0.8;
+		}
+		50% {
+			transform: scale(1.2);
+			opacity: 0.4;
+		}
+		100% {
+			transform: scale(0.8);
+			opacity: 0.8;
+		}
+	}
+
+	.animate-ping-slow {
+		animation: ping-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	}
+
+	.perspective-container {
+		perspective: 1500px;
+		transform-style: preserve-3d;
+		padding: 20px 0;
+	}
+
+	.dashboard-preview {
+		position: relative;
+		transform: rotateY(-10deg) rotateX(5deg);
+		animation: levitate 6s ease-in-out infinite;
+		transition:
+			transform 0.3s ease,
+			box-shadow 0.3s ease;
+	}
+
+	.dashboard-preview:hover {
+		transform: rotateY(-8deg) rotateX(3deg) scale(1.02);
+	}
+
+	.phone-mockup {
+		max-width: 320px;
+		margin: 0 auto;
+	}
+
+	@keyframes levitate {
+		0%,
+		100% {
+			transform: rotateY(-10deg) rotateX(5deg) translateY(0);
+		}
+		50% {
+			transform: rotateY(-10deg) rotateX(5deg) translateY(-10px);
+		}
 	}
 </style>

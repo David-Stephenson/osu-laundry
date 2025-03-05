@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Machine } from '$lib/types';
 	import { formatDateTime, formatRemainingTime, getStatusStyle } from '$lib/utils';
-	import { Ban, Lock, Plus, Pin, PinOff, Star } from 'lucide-svelte';
+	import { Star } from 'lucide-svelte';
 
 	export let machines: Machine[];
 	export let type: 'washer' | 'dryer';
@@ -33,65 +33,89 @@
 </script>
 
 <div>
-	<h2 class="mb-4 md:mb-6 text-xl md:text-2xl font-bold text-white">
+	<h2 class="mb-4 text-xl font-bold text-white md:mb-6 md:text-2xl">
 		{machines.length}
 		{type === 'washer' ? 'Washers' : 'Dryers'}
 	</h2>
-	<div class="overflow-hidden rounded-2xl border border-gray-800/50">
-		<table class="w-full overflow-hidden bg-gray-900/30 backdrop-blur-sm">
+	<div class="overflow-hidden rounded-2xl border border-zinc-800">
+		<table class="w-full overflow-hidden bg-zinc-900/30 backdrop-blur-sm">
 			<thead>
-				<tr>
-					<th class="w-12 px-2 py-3 md:py-4 text-left text-xs md:text-sm font-medium uppercase tracking-wider text-gray-400">#</th>
-					<th class="w-10 px-2 py-3 md:py-4 text-center text-xs md:text-sm font-medium uppercase tracking-wider text-gray-400">Pin</th>
-					<th class="px-4 md:px-6 py-3 md:py-4 text-left text-xs md:text-sm font-medium uppercase tracking-wider text-gray-400">Status</th>
-					<th class="px-2 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm font-medium uppercase tracking-wider text-gray-400">Time Left</th>
-					<th class="hidden md:table-cell px-6 py-4 text-center text-sm font-medium uppercase tracking-wider text-gray-400">Est. Done</th>
-					<th class="px-2 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm font-medium uppercase tracking-wider text-gray-400">Updated</th>
+				<tr class="border-b border-zinc-800">
+					<th
+						class="w-16 px-4 py-4 text-left text-sm font-medium uppercase tracking-wider text-zinc-400"
+						>#</th
+					>
+					<th
+						class="w-14 px-3 py-4 text-center text-sm font-medium uppercase tracking-wider text-zinc-400"
+						>Pin</th
+					>
+					<th class="px-6 py-4 text-left text-sm font-medium uppercase tracking-wider text-zinc-400"
+						>Status</th
+					>
+					<th
+						class="px-6 py-4 text-center text-sm font-medium uppercase tracking-wider text-zinc-400"
+						>Time Left</th
+					>
+					<th
+						class="hidden px-6 py-4 text-center text-sm font-medium uppercase tracking-wider text-zinc-400 md:table-cell"
+						>Est. Done</th
+					>
+					<th
+						class="px-6 py-4 text-center text-sm font-medium uppercase tracking-wider text-zinc-400"
+						>Updated</th
+					>
 				</tr>
 			</thead>
-			<tbody class="border-t border-gray-800/50">
+			<tbody>
 				{#each machines.sort((a, b) => a.number - b.number) as machine}
-					<tr class={`transition-colors hover:bg-gray-800/30 ${!machine.is_active ? 'opacity-50' : ''} 
-						${pinnedMachines.has(machine.id) ? 'bg-gray-800/20' : ''}`}
+					<tr
+						class={`transition-colors hover:bg-zinc-800/50 ${!machine.is_active ? 'opacity-60' : ''} 
+						${pinnedMachines.has(machine.id) ? 'bg-zinc-800/30' : ''}`}
 					>
-						<td class="w-12 px-2 py-3 md:py-4 text-left">
-							<span class="text-base md:text-lg font-semibold text-white">#{machine.number}</span>
+						<td class="w-16 px-4 py-5 text-left">
+							<span class="text-xl font-semibold text-white">#{machine.number}</span>
 						</td>
-						<td class="w-10 px-2 py-3 md:py-4">
+						<td class="w-14 px-3 py-5">
 							<button
-								class="flex items-center justify-center text-gray-500 hover:text-scarlet transition-colors"
+								class="flex h-8 w-8 items-center justify-center rounded-full text-zinc-500 transition-colors hover:text-scarlet"
 								on:click|stopPropagation={() => onTogglePin(machine.id)}
 							>
-								<Star class="h-4 w-4 {pinnedMachines.has(machine.id) ? 'fill-current text-scarlet' : ''}" />
+								<Star
+									class="h-5 w-5 {pinnedMachines.has(machine.id)
+										? 'fill-current text-scarlet'
+										: ''}"
+								/>
 							</button>
 						</td>
-						<td class="px-4 md:px-6 py-3 md:py-4 text-left">
-							<span class={`inline-block rounded-full px-2 md:px-4 py-1 md:py-1.5 text-xs md:text-sm font-medium ${getStatusStyle(machine.status)}`}>
+						<td class="px-6 py-5 text-left">
+							<span
+								class={`inline-block rounded-full px-4 py-2 text-sm font-medium ${getStatusStyle(machine.status)}`}
+							>
 								{machine.status.replace('_', ' ')}
 							</span>
 						</td>
-						<td class="px-2 md:px-6 py-3 md:py-4 text-center text-sm md:text-base font-medium text-gray-300">
+						<td class="px-6 py-5 text-center text-base font-medium text-zinc-300">
 							{#if machine.status === 'IN_USE'}
 								{formatRemainingTime(machine.remaining_seconds)}
 							{:else}
 								-
 							{/if}
 						</td>
-						<td class="hidden md:table-cell px-6 py-4 text-center font-medium text-gray-300">
+						<td class="hidden px-6 py-5 text-center font-medium text-zinc-300 md:table-cell">
 							{#if machine.status === 'IN_USE'}
 								{formatDateTime(machine.estimated_end)}
 							{:else}
 								-
 							{/if}
 						</td>
-						<td class="px-2 md:px-6 py-3 md:py-4 text-center text-xs md:text-sm text-gray-400">
+						<td class="px-6 py-5 text-center text-sm text-zinc-400">
 							{formatLastUpdated(machine.received_at)}
 						</td>
 					</tr>
 					{#if machine !== machines[machines.length - 1]}
 						<tr>
 							<td colspan="6" class="p-0">
-								<div class="border-t border-gray-800/50"></div>
+								<div class="border-t border-zinc-800/30"></div>
 							</td>
 						</tr>
 					{/if}

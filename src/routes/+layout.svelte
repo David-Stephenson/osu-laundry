@@ -1,5 +1,7 @@
 <script lang="ts">
 	import '../app.scss';
+
+	import Footer from '../components/Footer.svelte';
 </script>
 
 <svelte:head>
@@ -9,3 +11,5 @@
 <div class="flex flex-col">
 	<slot />
 </div>
+
+<Footer />
