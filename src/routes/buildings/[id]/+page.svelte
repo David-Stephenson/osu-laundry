@@ -253,7 +253,7 @@
 						<div class="mx-auto mt-4 h-1 w-16 bg-scarlet"></div>
 					</h2>
 					<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-						{#each data.machines.filter((m) => pinnedMachines.has(m.id)) as machine}
+						{#each machines.filter((m) => pinnedMachines.has(m.id)) as machine}
 							<PinnedMachineCard {machine} onUnpin={togglePin} />
 						{/each}
 					</div>

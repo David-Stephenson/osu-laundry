@@ -32,7 +32,7 @@
 		<!-- Page header -->
 		<div class="mb-16 text-center">
 			<h1 class="mb-6 font-serif text-4xl font-bold leading-tight md:text-5xl">
-				Select Your
+				Select Your<br class="block md:hidden" />
 				<span class="text-scarlet">Residence Hall</span>
 			</h1>
 			<p class="mx-auto mb-10 max-w-md text-lg text-zinc-400">

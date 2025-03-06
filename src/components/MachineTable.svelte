@@ -42,14 +42,14 @@
 			<thead>
 				<tr class="border-b border-zinc-800">
 					<th
-						class="w-16 px-4 py-4 text-left text-sm font-medium uppercase tracking-wider text-zinc-400"
+						class="w-16 px-4 py-4 text-center text-sm font-medium uppercase tracking-wider text-zinc-400 md:text-left"
 						>#</th
 					>
 					<th
 						class="w-14 px-3 py-4 text-center text-sm font-medium uppercase tracking-wider text-zinc-400"
 						>Pin</th
 					>
-					<th class="px-6 py-4 text-left text-sm font-medium uppercase tracking-wider text-zinc-400"
+					<th class="px-6 py-4 text-center text-sm font-medium uppercase tracking-wider text-zinc-400 md:text-left"
 						>Status</th
 					>
 					<th
@@ -72,7 +72,7 @@
 						class={`transition-colors hover:bg-zinc-800/50 ${!machine.is_active ? 'opacity-60' : ''} 
 						${pinnedMachines.has(machine.id) ? 'bg-zinc-800/30' : ''}`}
 					>
-						<td class="w-16 px-4 py-5 text-left">
+						<td class="w-16 px-4 py-5 text-center md:text-left">
 							<span class="text-xl font-semibold text-white">#{machine.number}</span>
 						</td>
 						<td class="w-14 px-3 py-5">
@@ -87,7 +87,7 @@
 								/>
 							</button>
 						</td>
-						<td class="px-6 py-5 text-left">
+						<td class="px-6 py-5 text-center md:text-left">
 							<span
 								class={`inline-block rounded-full px-4 py-2 text-sm font-medium ${getStatusStyle(machine.status)}`}
 							>
@@ -109,7 +109,7 @@
 							{/if}
 						</td>
 						<td class="px-6 py-5 text-center text-sm text-zinc-400">
-							{formatLastUpdated(machine.received_at)}
+							{formatLastUpdated(machine.estimated_end)}
 						</td>
 					</tr>
 					{#if machine !== machines[machines.length - 1]}
