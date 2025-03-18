@@ -35,9 +35,9 @@
     
     <!-- Main content -->
     <div class="relative h-[58px] sm:h-[65px] md:h-[75px]">
-        <!-- Time left (top right) -->
+        <!-- Time left (centered) -->
         {#if machine.status === 'IN_USE'}
-            <div class="absolute top-1.5 sm:top-2 right-2 flex items-center gap-1 text-zinc-300">
+            <div class="absolute top-1.5 sm:top-2 left-0 right-0 flex items-center justify-center gap-1 text-zinc-300">
                 <Clock class="h-2.5 sm:h-3 w-2.5 sm:w-3" />
                 <span class="text-[10px] sm:text-xs font-medium">{formatRemainingTime(machine.remaining_seconds)}</span>
             </div>
