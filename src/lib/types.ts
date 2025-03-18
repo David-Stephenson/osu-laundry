@@ -31,9 +31,16 @@ export interface MachineStats {
   washers_available: number;
   washers_in_use: number;
   washers_complete: number;
+  washers_error?: number;
   dryers_available: number;
   dryers_in_use: number;
   dryers_complete: number;
+  dryers_error?: number;
+  total_washers?: number;
+  total_dryers?: number;
+  total_machines?: number;
+  total_in_use?: number;
+  total_available?: number;
 }
 
 export interface BuildingResponse {

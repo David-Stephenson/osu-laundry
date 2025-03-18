@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Machine } from '$lib/types';
 	import { formatDateTime, formatRemainingTime, getStatusStyle } from '$lib/utils';
-	import { Star } from 'lucide-svelte';
+	import { Star, Clock } from 'lucide-svelte';
 
 	export let machines: Machine[];
 	export let type: 'washer' | 'dryer';
@@ -33,23 +33,74 @@
 </script>
 
 <div>
-	<h2 class="mb-4 text-xl font-bold text-white md:mb-6 md:text-2xl">
+	<h2 class="mb-3 text-lg font-bold text-white md:mb-6 md:text-2xl">
 		{machines.length}
 		{type === 'washer' ? 'Washers' : 'Dryers'}
 	</h2>
-	<div class="overflow-hidden rounded-2xl border border-zinc-800">
+	
+	<!-- Mobile Table View (Only visible on small screens) -->
+	<div class="md:hidden overflow-hidden rounded-lg border border-zinc-800 shadow-sm">
+		<table class="w-full overflow-hidden bg-zinc-900/30 backdrop-blur-sm">
+			<thead>
+				<tr class="border-b border-zinc-800">
+					<th class="px-2.5 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400">#</th>
+					<th class="w-12 px-2 py-2.5 text-center text-xs font-semibold uppercase tracking-wide text-zinc-400">PIN</th>
+					<th class="px-2.5 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-zinc-400">STATUS</th>
+					<th class="px-2.5 py-2.5 text-center text-xs font-semibold uppercase tracking-wide text-zinc-400">TIME</th>
+				</tr>
+			</thead>
+			<tbody>
+				{#each machines.sort((a, b) => a.number - b.number) as machine}
+					<tr class={`border-b border-zinc-800/30 ${pinnedMachines.has(machine.id) ? 'bg-zinc-800/30' : ''}`}>
+						<td class="px-2.5 py-2.5 text-left">
+							<span class="text-base font-semibold text-white">#{machine.number}</span>
+						</td>
+						<td class="w-12 px-2 py-2.5 text-center">
+							<button
+								class="flex h-7 w-7 mx-auto items-center justify-center rounded-full text-zinc-500 hover:bg-zinc-800/50"
+								on:click|stopPropagation={() => onTogglePin(machine.id)}
+							>
+								<Star
+									class="h-4 w-4 {pinnedMachines.has(machine.id)
+										? 'fill-current text-scarlet'
+										: ''}"
+								/>
+							</button>
+						</td>
+						<td class="px-2.5 py-2.5 text-left">
+							<span
+								class={`inline-block rounded-full px-2.5 py-1 text-sm font-medium shadow-sm ${getStatusStyle(machine.status)}`}
+							>
+								{machine.status.replace('_', ' ')}
+							</span>
+						</td>
+						<td class="px-2.5 py-2.5 text-center text-sm font-medium text-zinc-300">
+							{#if machine.status === 'IN_USE'}
+								{formatRemainingTime(machine.remaining_seconds)}
+							{:else}
+								-
+							{/if}
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
+	
+	<!-- Desktop Table View (Hidden on mobile) -->
+	<div class="hidden md:block overflow-hidden rounded-2xl border border-zinc-800">
 		<table class="w-full overflow-hidden bg-zinc-900/30 backdrop-blur-sm">
 			<thead>
 				<tr class="border-b border-zinc-800">
 					<th
-						class="w-16 px-4 py-4 text-center text-sm font-medium uppercase tracking-wider text-zinc-400 md:text-left"
+						class="w-16 px-4 py-4 text-left text-sm font-medium uppercase tracking-wider text-zinc-400"
 						>#</th
 					>
 					<th
 						class="w-14 px-3 py-4 text-center text-sm font-medium uppercase tracking-wider text-zinc-400"
 						>Pin</th
 					>
-					<th class="px-6 py-4 text-center text-sm font-medium uppercase tracking-wider text-zinc-400 md:text-left"
+					<th class="px-6 py-4 text-left text-sm font-medium uppercase tracking-wider text-zinc-400"
 						>Status</th
 					>
 					<th
@@ -57,7 +108,7 @@
 						>Time Left</th
 					>
 					<th
-						class="hidden px-6 py-4 text-center text-sm font-medium uppercase tracking-wider text-zinc-400 md:table-cell"
+						class="px-6 py-4 text-center text-sm font-medium uppercase tracking-wider text-zinc-400"
 						>Est. Done</th
 					>
 					<th
@@ -72,7 +123,7 @@
 						class={`transition-colors hover:bg-zinc-800/50 ${!machine.is_active ? 'opacity-60' : ''} 
 						${pinnedMachines.has(machine.id) ? 'bg-zinc-800/30' : ''}`}
 					>
-						<td class="w-16 px-4 py-5 text-center md:text-left">
+						<td class="w-16 px-4 py-5 text-left">
 							<span class="text-xl font-semibold text-white">#{machine.number}</span>
 						</td>
 						<td class="w-14 px-3 py-5">
@@ -87,7 +138,7 @@
 								/>
 							</button>
 						</td>
-						<td class="px-6 py-5 text-center md:text-left">
+						<td class="px-6 py-5 text-left">
 							<span
 								class={`inline-block rounded-full px-4 py-2 text-sm font-medium ${getStatusStyle(machine.status)}`}
 							>
@@ -101,7 +152,7 @@
 								-
 							{/if}
 						</td>
-						<td class="hidden px-6 py-5 text-center font-medium text-zinc-300 md:table-cell">
+						<td class="px-6 py-5 text-center font-medium text-zinc-300">
 							{#if machine.status === 'IN_USE'}
 								{formatDateTime(machine.estimated_end)}
 							{:else}

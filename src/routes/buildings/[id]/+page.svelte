@@ -20,6 +20,7 @@
 	let countdownInterval: ReturnType<typeof setInterval>;
 	let showErrorBanner = false;
 	let pinnedMachines: Set<string> = new Set();
+	let activeTab: 'washers' | 'dryers' = 'washers';
 
 	// Helper function to format date to local time
 	function formatDateTime(isoString: string): string {
@@ -173,6 +174,7 @@
 				: 'Loading laundry machine information...'}
 		/>
 		<title>Laundry Machines at {data.building.organization_name}</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 	{:else}
 		<title>Loading laundry machine information...</title>
 	{/if}
@@ -188,71 +190,93 @@
 	</div>
 {/if}
 
-<div class="min-h-screen bg-black px-4 py-10 text-white md:px-8 md:py-16">
+<div class="min-h-screen bg-black px-4 py-4 text-white sm:px-6 md:px-8 md:py-16">
 	<div class="mx-auto w-full max-w-7xl">
-		<div class="mb-12">
-			<a
-				href="/buildings"
-				class="group inline-flex items-center gap-3 rounded-lg border border-zinc-800 bg-zinc-900/80 px-5
-                py-3 font-medium text-white transition-all hover:border-scarlet/50 hover:bg-zinc-800"
-			>
-				<ArrowLeft class="h-5 w-5" />
-				<span class="transition-transform group-hover:translate-x-[-4px]">Back to Buildings</span>
-			</a>
+		<!-- Mobile Header -->
+		<div class="md:hidden mb-5">
+			<div class="flex items-center justify-between mb-3">
+				<a
+					href="/buildings"
+					class="group inline-flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-900/80 px-3 py-1.5 text-white shadow-sm"
+				>
+					<ArrowLeft class="h-4 w-4" />
+					<span class="text-sm">Back</span>
+				</a>
+				
+				<h1 class="font-serif text-xl font-bold text-white text-center">{data.building?.organization_name}</h1>
+				
+				<button
+					on:click={fetchBuildingDetails}
+					disabled={loading}
+					class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 shadow-sm"
+				>
+					<RotateCw class="h-5 w-5 {loading ? 'animate-spin' : ''}" />
+				</button>
+			</div>
+			
+			<div class="flex items-center justify-center text-xs text-zinc-500 mb-1">
+				<span>Updated {lastRefresh ? formatDateTime(lastRefresh.toISOString()) : ''}</span>
+				<span class="mx-2 text-zinc-700">•</span>
+				<span class="text-scarlet font-medium">Refreshes in {countdown}s</span>
+			</div>
 		</div>
+        
+        <!-- Desktop Header -->
+        <div class="hidden md:block mb-10">
+            <div class="flex flex-row items-center justify-between mb-6 gap-2">
+                <a
+                    href="/buildings"
+                    class="group inline-flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/80 px-5 py-3 font-medium text-white text-base"
+                >
+                    <ArrowLeft class="h-5 w-5" />
+                    <span class="transition-transform group-hover:translate-x-[-2px]">Back to Buildings</span>
+                </a>
+                
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2 text-base text-zinc-400">
+                        {#if lastRefresh}
+                            <span>Updated {formatDateTime(lastRefresh.toISOString())}</span>
+                            <span class="text-zinc-600">•</span>
+                        {/if}
+                        <span><span class="font-bold text-scarlet">{countdown}s</span></span>
+                    </div>
+                    <button
+                        on:click={fetchBuildingDetails}
+                        disabled={loading}
+                        class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900"
+                    >
+                        <RotateCw class="h-5 w-5 {loading ? 'animate-spin' : ''}" />
+                    </button>
+                </div>
+            </div>
+            
+            <h1 class="text-center font-serif text-4xl lg:text-6xl font-bold text-white">
+                {data.building?.organization_name}
+                <div class="mx-auto mt-6 h-1 w-24 bg-scarlet"></div>
+            </h1>
+        </div>
 
 		{#if error}
 			<div
-				class="rounded-xl border border-red-800/50 bg-red-900/30 px-8 py-6 text-center text-lg font-medium text-red-300 backdrop-blur-sm"
+				class="rounded-lg border border-red-800/50 bg-red-900/30 px-3 py-2 md:px-8 md:py-6 text-center text-xs md:text-lg font-medium text-red-300 backdrop-blur-sm"
 			>
 				{error}
 			</div>
 		{:else if data.building}
-			<h1
-				class="mb-10 text-center font-serif text-4xl font-bold text-white md:text-5xl lg:text-6xl"
-			>
-				{data.building.organization_name}
-				<div class="mx-auto mt-6 h-1 w-24 bg-scarlet"></div>
-			</h1>
-
-			<div
-				class="mb-10 flex flex-col items-center justify-between gap-4 rounded-xl border border-zinc-800 bg-zinc-900/40 p-4 sm:flex-row"
-			>
-				<div class="flex items-center gap-2 text-lg text-zinc-400">
-					{#if lastRefresh}
-						<span>Last updated {formatDateTime(lastRefresh.toISOString())}</span>
-						<span>•</span>
-					{/if}
-					<span>Refreshing in <span class="font-bold text-scarlet">{countdown}s</span></span>
-				</div>
-				<button
-					on:click={fetchBuildingDetails}
-					disabled={loading}
-					class="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900
-                    px-6 text-base font-medium text-white transition-colors hover:border-scarlet/50
-                    hover:bg-zinc-800 disabled:opacity-50"
-				>
-					{#if loading}
-						<RotateCw class="h-5 w-5 animate-spin" />
-					{/if}
-					Refresh
-				</button>
-			</div>
-
 			{#if stats}
-				<div class="mb-16">
+				<div class="mb-4 md:mb-12">
 					<MachineStats {stats} />
 				</div>
 			{/if}
 
 			<!-- Pinned Machines Section -->
 			{#if pinnedMachines.size > 0}
-				<div class="mb-16">
-					<h2 class="mb-8 text-center text-3xl font-bold text-white">
-						Pinned Machines
-						<div class="mx-auto mt-4 h-1 w-16 bg-scarlet"></div>
+				<div class="mb-4 md:mb-12">
+					<h2 class="mb-2 md:mb-6 text-center text-base md:text-3xl font-bold text-white">
+						<span>Pinned Machines</span>
+						<div class="mx-auto mt-1 md:mt-4 h-0.5 md:h-1 w-10 md:w-16 bg-scarlet"></div>
 					</h2>
-					<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+					<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
 						{#each machines.filter((m) => pinnedMachines.has(m.id)) as machine}
 							<PinnedMachineCard {machine} onUnpin={togglePin} />
 						{/each}
@@ -260,16 +284,36 @@
 				</div>
 			{/if}
 
+			<!-- Mobile Tabs (Only visible on small screens) -->
+			<div class="block md:hidden mb-5">
+				<div class="flex rounded-lg overflow-hidden border border-zinc-800 shadow-sm">
+					<button 
+						class="flex-1 py-3 text-center font-medium text-sm uppercase tracking-wide transition-colors
+							{activeTab === 'washers' ? 'bg-scarlet text-white' : 'bg-zinc-900 text-zinc-400'}"
+						on:click={() => activeTab = 'washers'}
+					>
+						Washers
+					</button>
+					<button 
+						class="flex-1 py-3 text-center font-medium text-sm uppercase tracking-wide transition-colors
+							{activeTab === 'dryers' ? 'bg-scarlet text-white' : 'bg-zinc-900 text-zinc-400'}"
+						on:click={() => activeTab = 'dryers'}
+					>
+						Dryers
+					</button>
+				</div>
+			</div>
+
 			{#each sortedRooms as room}
-				<div class="mb-16">
+				<div class="mb-4 md:mb-16">
 					{#if hasMultipleRooms}
-						<h2 class="mb-8 text-center text-3xl font-bold">
+						<h2 class="mb-2 md:mb-8 text-center text-lg md:text-3xl font-bold">
 							<span class="text-scarlet">{room.roomName}</span>
 						</h2>
 					{/if}
 
-					<!-- Washers Table -->
-					<div class="mb-10 overflow-x-auto">
+					<!-- Washers Table (Hidden on mobile when dryers tab is active) -->
+					<div class="mb-3 md:mb-10 overflow-x-auto {activeTab !== 'washers' ? 'hidden md:block' : ''}">
 						<MachineTable
 							machines={room.washers}
 							type="washer"
@@ -278,8 +322,8 @@
 						/>
 					</div>
 
-					<!-- Dryers Table -->
-					<div class="overflow-x-auto">
+					<!-- Dryers Table (Hidden on mobile when washers tab is active) -->
+					<div class="overflow-x-auto {activeTab !== 'dryers' ? 'hidden md:block' : ''}">
 						<MachineTable
 							machines={room.dryers}
 							type="dryer"
@@ -292,20 +336,3 @@
 		{/if}
 	</div>
 </div>
-
-<style>
-	.animate-fade-in {
-		animation: fadeIn 0.3s ease-in-out;
-	}
-
-	@keyframes fadeIn {
-		from {
-			opacity: 0;
-			transform: translateY(-100%);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-</style>
