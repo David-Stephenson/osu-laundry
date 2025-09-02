@@ -3,6 +3,7 @@
     import { formatRemainingTime, formatDateTimeLocal, getStatusColor } from '$lib/utils';
     import { Pin, Clock } from 'lucide-svelte';
 
+
     export let machine: Machine;
     export let onUnpin: (id: string) => void;
 
@@ -28,7 +29,7 @@
         machine.estimated_end
 
     // Whether to render caution tape on the header
-    $: isUnavailable = machine.status === 'UNAVAILABLE' || (machine as any).is_active === false;
+    $: isUnavailable = (machine.status !== 'AVAILABLE' && machine.status !== 'IN_USE' && machine.status !== 'COMPLETE') || (machine as any).is_active === false;
 </script>
 
 <div class="rounded-xl {cardStyle.bg} h-[85px] sm:h-[95px] md:h-[110px] shadow-lg overflow-hidden ring-1 {cardStyle.ring} {machine.is_active === false ? 'opacity-60' : ''} transition-all hover:shadow-xl">

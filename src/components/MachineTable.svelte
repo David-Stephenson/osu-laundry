@@ -10,9 +10,11 @@
 	export let onTogglePin: (id: string) => void;
 
 	function isUnavailable(machine: Machine): boolean {
-		return (
-			machine.status === 'UNAVAILABLE' || (machine as any).is_active === false
-		);
+		const nonOperational =
+			machine.status !== 'AVAILABLE' &&
+			machine.status !== 'IN_USE' &&
+			machine.status !== 'COMPLETE';
+		return nonOperational || (machine as any).is_active === false;
 	}
 
 	function getRowClasses(machine: Machine) {
