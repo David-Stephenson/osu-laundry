@@ -25,8 +25,6 @@
      const make = (ext: string) => widths.map((w) => `${base}-${w}.${ext} ${w}w`).join(', ');
      return {
        webp: make('webp'),
-       avif: make('avif'),
-       jpg: make('jpg'),
        fallback: `${base}.webp`
      };
    }
@@ -265,7 +263,6 @@
 							>
 								{#if building.image}
 									<picture class="absolute inset-0 block">
-										<source type="image/avif" srcset={pictureFor(building.image)?.avif} sizes="(min-width:1024px) 384px, (min-width:640px) 320px, 100vw" />
 										<source type="image/webp" srcset={pictureFor(building.image)?.webp} sizes="(min-width:1024px) 384px, (min-width:640px) 320px, 100vw" />
 										<img alt={`${building.organization_name} exterior`} src={pictureFor(building.image)?.fallback} class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-110" loading="lazy" />
 									</picture>
@@ -323,7 +320,6 @@
 							>
 								{#if building.image}
 									<picture class="absolute inset-0 block">
-										<source type="image/avif" srcset={pictureFor(building.image)?.avif} sizes="(min-width:1024px) 384px, (min-width:640px) 320px, 100vw" />
 										<source type="image/webp" srcset={pictureFor(building.image)?.webp} sizes="(min-width:1024px) 384px, (min-width:640px) 320px, 100vw" />
 										<img alt={`${building.organization_name} exterior`} src={pictureFor(building.image)?.fallback} class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-110" loading="lazy" />
 									</picture>
