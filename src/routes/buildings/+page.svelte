@@ -6,6 +6,30 @@
 	import { quintOut } from 'svelte/easing';
 	import { onMount } from 'svelte';
   import ogImage from '../../images/page.png';
+ 
+   // Map src path to prebuilt files under /generated/dorms via scripts/build-images.mjs
+   function normalizeDormPath(p?: string): string {
+     if (!p) return '';
+     return p.startsWith('/src/') ? p : p.replace(/^\/?images\//, '/src/images/');
+   }
+   function generatedBase(path?: string): string | null {
+     const key = normalizeDormPath(path);
+     if (!key) return null;
+     const base = key.substring(key.lastIndexOf('/') + 1).replace(/\.[^.]+$/, '');
+     return `/generated/dorms/${base}`;
+   }
+   function pictureFor(path?: string) {
+     const base = generatedBase(path);
+     if (!base) return null;
+     const widths = [400, 640, 960, 1280];
+     const make = (ext: string) => widths.map((w) => `${base}-${w}.${ext} ${w}w`).join(', ');
+     return {
+       webp: make('webp'),
+       avif: make('avif'),
+       jpg: make('jpg'),
+       fallback: `${base}.webp`
+     };
+   }
 
 	export let data: PageData;
 
@@ -30,10 +54,6 @@
 		try {
 			localStorage.setItem(FAVORITES_KEY, JSON.stringify(favoriteIds));
 		} catch {}
-	}
-
-	function isFavorite(id: string) {
-		return favoriteIds.includes(String(id));
 	}
 
 	function toggleFavorite(id: string) {
@@ -237,17 +257,18 @@
 					<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:gap-5 lg:grid-cols-3">
 						{#each favoriteBuildings as building, i (building.id)}
 							<a
-								href={`/buildings/${building.id}`}
+								href={`/buildings/${encodeURIComponent(String(building.id))}`}
 								in:fly={{ y: 20, delay: 80 + i * 40, duration: 300, easing: quintOut }}
 								class="group relative flex min-h-[84px] w-full items-center justify-center overflow-hidden rounded-2xl px-4 py-5 text-center shadow-lg ring-1 ring-gray-200 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:ring-gray-300 focus:outline-none focus:ring-2 focus:ring-scarlet/60 focus:ring-offset-2 focus:ring-offset-transparent active:scale-[0.98] sm:min-h-[96px] md:min-h-[110px] md:p-6 {building.image
 									? 'bg-white/80'
 									: 'bg-scarlet'}"
 							>
 								{#if building.image}
-									<div
-										class="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
-										style={`background-image: url(${building.image})`}
-									></div>
+									<picture class="absolute inset-0 block">
+										<source type="image/avif" srcset={pictureFor(building.image)?.avif} sizes="(min-width:1024px) 384px, (min-width:640px) 320px, 100vw" />
+										<source type="image/webp" srcset={pictureFor(building.image)?.webp} sizes="(min-width:1024px) 384px, (min-width:640px) 320px, 100vw" />
+										<img alt={`${building.organization_name} exterior`} src={pictureFor(building.image)?.fallback} class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-110" loading="lazy" />
+									</picture>
 									<div
 										class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-transparent"
 									></div>
@@ -294,17 +315,18 @@
 					<div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:gap-5 lg:grid-cols-3">
 						{#each group.items as building, i (building.id)}
 							<a
-								href={`/buildings/${building.id}`}
+								href={`/buildings/${encodeURIComponent(String(building.id))}`}
 								in:fly={{ y: 20, delay: 100 + gi * 20 + i * 40, duration: 300, easing: quintOut }}
 								class="group relative flex min-h-[84px] w-full items-center justify-center overflow-hidden rounded-2xl px-4 py-5 text-center shadow-lg ring-1 ring-gray-200 backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:ring-gray-300 focus:outline-none focus:ring-2 focus:ring-scarlet/60 focus:ring-offset-2 focus:ring-offset-transparent active:scale-[0.98] sm:min-h-[96px] md:min-h-[110px] md:p-6 {building.image
 									? 'bg-white/80'
 									: 'bg-scarlet'}"
 							>
 								{#if building.image}
-									<div
-										class="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
-										style={`background-image: url(${building.image})`}
-									></div>
+									<picture class="absolute inset-0 block">
+										<source type="image/avif" srcset={pictureFor(building.image)?.avif} sizes="(min-width:1024px) 384px, (min-width:640px) 320px, 100vw" />
+										<source type="image/webp" srcset={pictureFor(building.image)?.webp} sizes="(min-width:1024px) 384px, (min-width:640px) 320px, 100vw" />
+										<img alt={`${building.organization_name} exterior`} src={pictureFor(building.image)?.fallback} class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-110" loading="lazy" />
+									</picture>
 									<div
 										class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-transparent"
 									></div>

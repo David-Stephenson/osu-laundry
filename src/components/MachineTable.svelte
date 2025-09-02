@@ -32,6 +32,16 @@
 		return classes.join(' ');
 	}
 
+	// Returns the human-readable status label for a machine.
+	// Maps network-related errors to "OUT OF SERVICE" to avoid confusing users.
+	function displayStatus(status: string): string {
+		const normalized = status.replace(/\s+/g, '_').toUpperCase();
+		if (normalized === 'UNAVAILABLE' || normalized === 'NETWORK_ERROR') {
+			return 'OUT OF SERVICE';
+		}
+		return status.replace('_', ' ');
+	}
+
 	let rootEl: HTMLElement;
 
 	// Keep caution tape stripes aligned across rows by offsetting each row's
@@ -111,7 +121,7 @@
 								<span
 									class={`mx-auto inline-flex items-center justify-center whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-bold leading-none shadow-sm border ${getStatusStyle(machine.status)}`}
 								>
-									{machine.status === 'UNAVAILABLE' ? 'OUT OF SERVICE' : machine.status.replace('_', ' ')}
+									{displayStatus(machine.status)}
 								</span>
 							</td>
 							<td class="px-2.5 py-2.5 text-center text-sm font-mono font-bold text-gray-900">
@@ -177,7 +187,7 @@
 								<span
 									class={`mx-auto inline-flex items-center justify-center whitespace-nowrap rounded-full px-3 py-1.5 text-[11px] font-bold leading-none shadow-sm border ${getStatusStyle(machine.status)}`}
 								>
-									{(machine.status === 'UNAVAILABLE') ? 'OUT OF SERVICE' : machine.status.replace('_', ' ')}
+									{displayStatus(machine.status)}
 								</span>
 							</td>
 							<td class="px-3 py-3 text-center text-sm font-mono font-bold text-gray-900">

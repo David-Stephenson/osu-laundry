@@ -8,21 +8,23 @@
 
 	export let dorms: Dorm[] = [];
 
-	// Import all dorm images with enhanced processing so we can pass them to <enhanced:img>
-	const dormImageModules = import.meta.glob(
-		'/src/images/dorms/*.{avif,gif,heif,jpeg,jpg,png,tiff,webp,svg}',
-		{ eager: true, query: { enhanced: true } }
-	) as Record<string, { default: string }>;
-
+	// Map original dorm image paths to preprocessed outputs under /generated/dorms
 	function normalizeDormPath(p?: string): string {
 		if (!p) return '';
-		// Accept historical "/images/..." and normalize to the new "/src/images/..." location
 		return p.startsWith('/src/') ? p : p.replace(/^\/?images\//, '/src/images/');
 	}
 
-	function getEnhancedDormImage(path?: string): string | null {
-		const normalized = normalizeDormPath(path);
-		return dormImageModules[normalized]?.default || null;
+	function generatedBase(path?: string): string | null {
+		const key = normalizeDormPath(path);
+		if (!key) return null;
+		const base = key.substring(key.lastIndexOf('/') + 1).replace(/\.[^.]+$/, '');
+		return `/generated/dorms/${base}`;
+	}
+
+	function processedWebp(path?: string, width = 400): string | null {
+		const base = generatedBase(path);
+		if (!base) return null;
+		return `${base}-${width}.webp`;
 	}
 </script>
 
@@ -36,12 +38,7 @@
 						{#each dorms as dorm}
 							<div class="flow-polaroid" style="transform: rotate({(Math.random() - 0.5) * 8}deg);">
 								{#if dorm.image && dorm.image !== ''}
-									{@const enhanced = getEnhancedDormImage(dorm.image)}
-									{#if enhanced}
-										<enhanced:img src={enhanced} alt={dorm.name} class="polaroid-image" />
-									{:else}
-									<img src={dorm.image} alt={dorm.name} class="polaroid-image" />
-									{/if}
+									<img src={processedWebp(dorm.image) || dorm.image} alt={dorm.name} class="polaroid-image" loading="lazy" decoding="async" />
 								{:else}
 									<div class="polaroid-image flex items-center justify-center bg-scarlet">
 										<WashingMachine class="h-6 w-6 text-white" />

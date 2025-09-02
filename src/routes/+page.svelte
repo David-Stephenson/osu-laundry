@@ -15,13 +15,13 @@
 	import PolaroidBackground from '../components/PolaroidBackground.svelte';
 	import { dorms } from '$lib/dorms';
 	import { page } from '$app/stores';
-	import PhoneImage from '../images/phone.png?enhanced';
-	import PageScreenshot from '../images/page.png?enhanced';
+	import phonePng from '../images/phone.png';
+	import pagePng from '../images/page.png';
 	import ogImage from '../images/page.png';
-	import TrackImage from '../images/track.png?enhanced';
-	import FavoritesImage from '../images/favorites.png?enhanced';
-	import PinnedImage from '../images/pinned.png?enhanced';
-	import OvalImage from '../images/oval.webp?enhanced';
+	import trackPng from '../images/track.png';
+	import favoritesPng from '../images/favorites.png';
+	import pinnedPng from '../images/pinned.png';
+	import ovalWebp from '../images/oval.webp';
 
 	// Testimonials array
 	const testimonials = [
@@ -170,7 +170,7 @@
 		<!-- Mobile Screenshot -->
 		<div class="mx-auto max-w-sm sm:hidden">
 			<div class="rounded-[28px] bg-white/60 p-2 shadow-lg ring-1 ring-gray-200 backdrop-blur-xl">
-				<enhanced:img src={PhoneImage} alt="OSU Laundry on mobile" class="w-full rounded-[18px]" />
+				<img src={phonePng} alt="OSU Laundry on mobile" class="w-full rounded-[18px]" />
 			</div>
 		</div>
 
@@ -180,8 +180,8 @@
 				class="rounded-[28px] bg-white/60 p-2 shadow-lg ring-1 ring-gray-200 backdrop-blur-xl sm:p-3"
 			>
 				<div class="relative aspect-[3/2] overflow-hidden rounded-2xl">
-					<enhanced:img
-						src={PageScreenshot}
+					<img
+						src={pagePng}
 						alt="OSU Laundry page preview"
 						class="h-full w-full object-cover"
 						sizes="min(1280px, 100vw)"
@@ -277,8 +277,8 @@
 						<div
 							class="relative mt-6 aspect-[16/10] overflow-hidden rounded-2xl bg-gray-50 ring-1 ring-gray-200"
 						>
-							<enhanced:img
-								src={TrackImage}
+							<img
+								src={trackPng}
 								alt="Real-time tracking screenshot"
 								class="absolute inset-0 h-full w-full object-cover"
 								sizes="min(1024px, 100vw)"
@@ -301,8 +301,8 @@
 						<div
 							class="relative mt-6 aspect-[16/10] overflow-hidden rounded-2xl bg-gray-50 ring-1 ring-gray-200"
 						>
-							<enhanced:img
-								src={FavoritesImage}
+							<img
+								src={favoritesPng}
 								alt="Favorites screenshot"
 								class="absolute inset-0 h-full w-full object-cover"
 								sizes="min(1024px, 100vw)"
@@ -328,8 +328,8 @@
 						<div
 							class="relative mt-6 aspect-[16/10] overflow-hidden rounded-2xl bg-gray-50 ring-1 ring-gray-200"
 						>
-							<enhanced:img
-								src={PinnedImage}
+							<img
+								src={pinnedPng}
 								alt="Real-time tracking screenshot"
 								class="absolute inset-0 h-full w-full object-cover"
 								sizes="min(1024px, 100vw)"
@@ -642,8 +642,8 @@
 	<!-- Governance / Metrics Section -->
 	<section class="relative overflow-hidden bg-gray-50 py-24 sm:py-32">
 		<!-- Background Oval -->
-		<enhanced:img
-			src={OvalImage}
+		<img
+			src={ovalWebp}
 			alt="Oval Background Pattern"
 			class="absolute inset-0 h-full w-full object-cover opacity-20"
 			sizes="100vw"
