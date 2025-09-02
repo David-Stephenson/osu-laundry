@@ -4,7 +4,10 @@ import { enhancedImages } from '@sveltejs/enhanced-img';
 import path from 'path';
 
 export default defineConfig({
-	plugins: [enhancedImages(), sveltekit()],
+	plugins: [
+		enhancedImages(),
+		sveltekit(),
+	],
 	resolve: {
 		alias: {
 			$components: path.resolve('./src/components'),

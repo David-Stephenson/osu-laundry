@@ -1,25 +1,33 @@
-export interface Building {
-  id: string;
-  organization_name: string;
-  created_at: string;
-  updated_at: string;
-}
+export type MachineStatus =
+	| 'AVAILABLE'
+	| 'IN_USE'
+	| 'COMPLETE'
+  | 'UNAVAILABLE'
 
-export interface Machine {
-  id: string;
-  room_id: string;
-  type: 'washer' | 'dryer';
-  status: string;
-  number: number;
-  remaining_seconds: number;
-  estimated_end: string;
-  status_id: string;
-  is_active: boolean;
-  control_id: string;
-  room_name: string;
-  building_id: string;
-  building_name: string;
-}
+export type Machine = {
+	id: string;
+	number: number;
+	type: 'washer' | 'dryer';
+	status: MachineStatus;
+	remaining_seconds: number;
+	estimated_end: string; // ISO string, can be "0001-01-01T00:00:00Z" when unknown
+	is_active?: boolean;
+	// Enriched fields added in the loader
+	room_id: string;
+	room_name: string;
+	building_id: string;
+	building_name: string;
+};
+
+export type Building = {
+	id: string;
+	organization_name: string;
+	image?: string;
+};
+
+export type PinnedMachine = {
+	buildingId: string;
+};
 
 export interface ApiResponse<T> {
   message: string;

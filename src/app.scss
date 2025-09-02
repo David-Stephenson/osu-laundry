@@ -9,8 +9,29 @@ html {
 	scroll-behavior: smooth;
 }
 
-body {
-	@apply bg-black;
+/* Hide scrollbars */
+.scrollbar-hide {
+	-ms-overflow-style: none;  /* Internet Explorer 10+ */
+	scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+	display: none;  /* Safari and Chrome */
+}
+
+/* Gentle pulse animation */
+@keyframes gentle-pulse {
+	0%, 100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	50% {
+		transform: scale(1.5);
+		opacity: 0.3;
+	}
+}
+
+.animate-gentle-pulse {
+	animation: gentle-pulse 2s ease-in-out infinite;
 }
 
 .animate-fade-in {
@@ -64,3 +85,28 @@ body {
 	animation-delay: 4s;
 }
 
+
+/* Caution tape stripes (reusable) */
+.caution-tape {
+	position: relative;
+}
+
+.caution-tape::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	background: repeating-linear-gradient(
+		-45deg,
+		oklch(57.7% 0.245 27.325 / 0.07) 0 15px,
+		oklch(12.9% 0.042 264.695 / 0.07) 15px 30px
+	);
+	background-size: 42px 42px;
+	background-position: 0 var(--stripe-offset, 0px);
+	pointer-events: none;
+}
+
+.caution-tape > * {
+	position: relative;
+	z-index: 2;
+}
