@@ -8,6 +8,7 @@
 	import { ArrowLeft, RotateCw, WifiOff, Pin } from 'lucide-svelte';
 	import PinnedMachineCard from '../../../components/PinnedMachineCard.svelte';
 	import type { PageData } from './$types';
+	import ogImage from '../../../images/page.png';
 	export let data: PageData;
 
 	let loading = false;
@@ -298,7 +299,7 @@
 			property="og:description"
 			content={`View available laundry machines at ${data.building.organization_name} - The Ohio State University.`}
 		/>
-		<meta property="og:image" content="/images/page.png" />
+		<meta property="og:image" content={ogImage} />
 		<meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : ''} />
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta
@@ -309,7 +310,7 @@
 			name="twitter:description"
 			content={`View available laundry machines at ${data.building.organization_name} - The Ohio State University.`}
 		/>
-		<meta name="twitter:image" content="/images/page.png" />
+		<meta name="twitter:image" content={ogImage} />
 		<link rel="canonical" href={typeof window !== 'undefined' ? window.location.href : ''} />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 	{:else}

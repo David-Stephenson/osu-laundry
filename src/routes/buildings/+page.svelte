@@ -5,6 +5,7 @@
 	import { fade, fly } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import { onMount } from 'svelte';
+  import ogImage from '../../images/page.png';
 
 	export let data: PageData;
 
@@ -111,7 +112,7 @@
 		property="og:description"
 		content="View available laundry machines across residence halls at The Ohio State University."
 	/>
-	<meta property="og:image" content="/images/page.png" />
+	<meta property="og:image" content={ogImage} />
 	<meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : ''} />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content="Select Your Residence | OSU Laundry" />
@@ -119,7 +120,7 @@
 		name="twitter:description"
 		content="View available laundry machines across residence halls at The Ohio State University."
 	/>
-	<meta name="twitter:image" content="/images/page.png" />
+	<meta name="twitter:image" content={ogImage} />
 	<link rel="canonical" href={typeof window !== 'undefined' ? window.location.href : ''} />
 </svelte:head>
 

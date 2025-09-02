@@ -7,7 +7,8 @@
 	const DEFAULT_TITLE = 'OSU Laundry';
 	const DEFAULT_DESCRIPTION =
 		'Real-time laundry machine status across Ohio State University residence halls at The Ohio State University.';
-	const DEFAULT_IMAGE = '/images/page.png';
+	import defaultOg from '../images/page.png';
+	const DEFAULT_IMAGE = defaultOg;
 
 	$: canonicalUrl = $page?.url?.href || '';
 	</script>

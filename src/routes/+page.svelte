@@ -17,6 +17,7 @@
 	import { page } from '$app/stores';
 	import PhoneImage from '../images/phone.png?enhanced';
 	import PageScreenshot from '../images/page.png?enhanced';
+	import ogImage from '../images/page.png';
 	import TrackImage from '../images/track.png?enhanced';
 	import FavoritesImage from '../images/favorites.png?enhanced';
 	import PinnedImage from '../images/pinned.png?enhanced';
@@ -99,12 +100,12 @@
 	<meta property="og:site_name" content="OSU Laundry" />
 	<meta property="og:title" content={HOME_TITLE} />
 	<meta property="og:description" content={HOME_DESCRIPTION} />
-	<meta property="og:image" content="/images/page.png" />
+	<meta property="og:image" content={ogImage} />
 	<meta property="og:url" content={canonicalUrl} />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={HOME_TITLE} />
 	<meta name="twitter:description" content={HOME_DESCRIPTION} />
-	<meta name="twitter:image" content="/images/page.png" />
+	<meta name="twitter:image" content={ogImage} />
 	<link rel="canonical" href={canonicalUrl} />
 </svelte:head>
 
@@ -639,7 +640,7 @@
 	</section>
 
 	<!-- Governance / Metrics Section -->
-	<section class="relative overflow-hidden bg-gray-50 py-24  sm:py-32">
+	<section class="relative overflow-hidden bg-gray-50 py-24 sm:py-32">
 		<!-- Background Oval -->
 		<enhanced:img
 			src={OvalImage}
