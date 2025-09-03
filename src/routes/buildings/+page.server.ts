@@ -5,7 +5,7 @@ import { dorms } from '$lib/dorms';
 import { levenshteinDistance } from '$lib/utils';
 import { error } from '@sveltejs/kit'
 
-export const prerender = true;
+export const prerender = false;
 
 export const load: PageServerLoad = async () => {
 	try {

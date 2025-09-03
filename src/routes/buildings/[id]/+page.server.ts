@@ -3,7 +3,7 @@ import { PUBLIC_API_URL } from '$env/static/public';
 import type { Building, Machine, ApiResponse, BuildingResponse } from '$lib/types';
 import { error } from '@sveltejs/kit'
 
-export const prerender = true;
+export const prerender = false;
 
 export const load: PageServerLoad = async ({ params }) => {
 	const [buildingResponse, machinesResponse] = await Promise.all([
