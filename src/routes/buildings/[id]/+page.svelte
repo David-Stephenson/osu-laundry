@@ -207,68 +207,52 @@
 	$: shouldShowNavigation = hasMultipleRooms;
 
 	// Function to clean up room names for mobile display
-	function getCleanRoomName(roomName: string, _buildingName: string): string {
-		return roomName; // backend now provides clean names
+	function getCleanRoomName(roomName: string, buildingName: string): string {
+		// Prefer the text inside parentheses, e.g., "Smith–Steeb Hall (Smith Room)" -> "Smith Room"
+		const paren = roomName.match(/\(([^)]+)\)/);
+		if (paren && paren[1]) {
+			return paren[1].trim();
+		}
+		// Otherwise, if the building name is prefixed, strip it
+		const bn = (buildingName || '').trim();
+		if (bn && roomName.toLowerCase().startsWith(bn.toLowerCase())) {
+			return roomName.slice(bn.length).replace(/^\s*[-–—]?\s*/, '').trim();
+		}
+		return roomName.trim();
 	}
 
 	// Function to get shortened room name for desktop navigation
 	function getShortRoomName(roomName: string, buildingName: string, allRooms: any[]): string {
-		const base = getCleanRoomName(roomName, buildingName).trim();
-
-		// If the room name references numbered floors (e.g., "4th, 5th, and 6th Floors"),
-		// display a compact numeric range for the sidebar like "4-6". If there's only
-		// one number, show that single number. If numbers are non-consecutive, join them
-		// with "/" (e.g., "4/6"). This keeps labels short without changing box size.
-		const numberMatches = base.match(/\d+/g)?.map((n) => parseInt(n, 10)) || [];
-		if (numberMatches.length > 0) {
-			const uniqueSorted = Array.from(new Set(numberMatches)).sort((a, b) => a - b);
-			if (uniqueSorted.length === 1) {
-				return String(uniqueSorted[0]);
-			}
-			let isConsecutive = true;
-			for (let i = 1; i < uniqueSorted.length; i++) {
-				if (uniqueSorted[i] !== uniqueSorted[i - 1] + 1) {
-					isConsecutive = false;
-					break;
-				}
-			}
-			if (isConsecutive) {
-				return `${uniqueSorted[0]}-${uniqueSorted[uniqueSorted.length - 1]}`;
-			}
-			return uniqueSorted.join('/');
+		const clean = getCleanRoomName(roomName, buildingName).trim();
+		// If the name is like "Room 1", "Room 2", show just the number in the sidebar
+		const roomNum = clean.match(/^Room\s+(\d+)\b/i);
+		if (roomNum) {
+			return roomNum[1];
 		}
-
-		// Prefer directional suffixes like "E/W/N/S" or "East/West/North/South"
-		const dirLetterFromName = (name: string): string | null => {
-			// Match trailing single letter direction or full-word direction
-			const single = name.match(/(?:^|\b|[-_])([EWNS])\s*$/i);
-			if (single) return single[1].toUpperCase();
-			const word = name.match(/\b(East|West|North|South)\s*$/i);
-			if (word) return word[1].charAt(0).toUpperCase();
-			return null;
-		};
-
-		const candidate = dirLetterFromName(base);
-		if (candidate) {
-			// Ensure uniqueness among all rooms; if conflict, fall back to minimal unique prefix
-			const transformedAll = allRooms.map((r) => dirLetterFromName(getCleanRoomName(r.roomName, buildingName)) || '');
-			const conflictCount = transformedAll.filter((c) => c === candidate).length;
-			if (conflictCount <= 1) return candidate; // unique
+		// If multiple floor numbers are present (e.g., "4th, 5th, and 6th Floors"), show range "4-6"
+		const nums = (clean.match(/\d+/g) || []).map((n) => parseInt(n, 10));
+		const uniqueSorted = Array.from(new Set(nums)).sort((a, b) => a - b);
+		if (uniqueSorted.length >= 2) {
+			return `${uniqueSorted[0]}-${uniqueSorted[uniqueSorted.length - 1]}`;
 		}
-
-		// Fallback: minimal unique-prefix generator
-		const all = allRooms.map((r) => getCleanRoomName(r.roomName, buildingName));
-		let len = 1;
-		let short = base.substring(0, len);
-		while (len < base.length) {
-			const conflicts = all.filter(
-				(n) => n !== base && n.toLowerCase().startsWith(short.toLowerCase())
-			);
-			if (conflicts.length === 0) break;
+		if (uniqueSorted.length === 1 && /\bFloor\b/i.test(clean)) {
+			return String(uniqueSorted[0]);
+		}
+		// Fallback: abbreviation from first word (e.g., "Smith Room" -> "Sm") with uniqueness
+		const firstWord = clean.split(/\s+/)[0] || clean;
+		const makeCode = (word: string, length: number) =>
+			word.slice(0, Math.max(1, length)).charAt(0).toUpperCase() + word.slice(1, length).toLowerCase();
+		let len = 2;
+		let code = makeCode(firstWord, len);
+		const allCodes = allRooms.map((r) => {
+			const w = (getCleanRoomName(r.roomName, buildingName).trim().split(/\s+/)[0] || '').toString();
+			return makeCode(w, len);
+		});
+		while (allCodes.filter((c) => c === code).length > 1 && len < firstWord.length) {
 			len++;
-			short = base.substring(0, len);
+			code = makeCode(firstWord, len);
 		}
-		return short;
+		return code;
 	}
 
 	function togglePin(machineId: string) {
