@@ -85,28 +85,13 @@ html {
 	animation-delay: 4s;
 }
 
-
 /* Caution tape stripes (reusable) */
 .caution-tape {
-	position: relative;
-}
-
-.caution-tape::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	z-index: 1;
-	background: repeating-linear-gradient(
+	background-image: repeating-linear-gradient(
 		-45deg,
 		oklch(57.7% 0.245 27.325 / 0.07) 0 15px,
 		oklch(12.9% 0.042 264.695 / 0.07) 15px 30px
 	);
 	background-size: 42px 42px;
 	background-position: 0 var(--stripe-offset, 0px);
-	pointer-events: none;
-}
-
-.caution-tape > * {
-	position: relative;
-	z-index: 2;
 }
